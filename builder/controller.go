@@ -11,7 +11,7 @@ import (
 	"os/exec"
 	"os/user"
 
-	jenkins "github.com/yosida95/golang-jenkins"
+	jenkins "github.com/ziyadparekh/golang-jenkins"
 )
 
 type User struct {

@@ -1,0 +1,15 @@
+{
+	"ImportPath": "github.com/ziyadparekh/bob",
+	"GoVersion": "go1.4.1",
+	"Deps": [
+		{
+			"ImportPath": "github.com/codegangsta/cli",
+			"Comment": "1.2.0-74-g50c77ec",
+			"Rev": "50c77ecec0068c9aef9d90ae0fd0fdf410041da3"
+		},
+		{
+			"ImportPath": "github.com/ziyadparekh/golang-jenkins",
+			"Rev": "0b9c8c4cb3ecc218ce6c386726954fe90c096a91"
+		}
+	]
+}
