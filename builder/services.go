@@ -7,6 +7,7 @@ var Services = []string{
 	"boss-service",
 	"logistics-service",
 	"message-center",
+	"1stdibs-admin-v2",
 }
 
 var JenkinsServices = map[string]string{
@@ -16,6 +17,7 @@ var JenkinsServices = map[string]string{
 	"boss":      Services[3],
 	"logistics": Services[4],
 	"msgcenter": Services[5],
+	"adminv2":   Services[6],
 }
 
 var Jobs = map[string]string{
@@ -30,6 +32,7 @@ var Jobs = map[string]string{
 	"message-center":      "JAVA-MessageCenterService(Custom)",
 	"query-service":       "JAVA-QueryServiceQueries (Custom)",
 	"solr-service":        "JAVA-SolrService (Custom)",
+	"1stdibs-admin-v2":    "Admin-v2 Deploy ANY FRUIT SERVER",
 }
 
 var DibsyJenkins = "http://jenkins.1stdibs.com"
