@@ -1,5 +1,13 @@
 package builder
 
+var Client = []string{
+	"1stdibs-admin-v2",
+}
+
+var JenkinsClients = map[string]string{
+	"adminv2": Client[0],
+}
+
 var Services = []string{
 	"identity-service",
 	"inventory-service",
@@ -7,7 +15,6 @@ var Services = []string{
 	"boss-service",
 	"logistics-service",
 	"message-center",
-	"1stdibs-admin-v2",
 }
 
 var JenkinsServices = map[string]string{
@@ -17,7 +24,6 @@ var JenkinsServices = map[string]string{
 	"boss":      Services[3],
 	"logistics": Services[4],
 	"msgcenter": Services[5],
-	"adminv2":   Services[6],
 }
 
 var Jobs = map[string]string{
@@ -40,3 +46,7 @@ var DibsyJenkins = "http://jenkins.1stdibs.com"
 var JenkinsHostKey = "SERVER_HOSTNAME"
 var JenkinsBranchKey = "BRANCH_NAME"
 var JenkinsServerName = "deathstar.1stdibs.com"
+var AdminV2DefaultBranch = "feature-deathstar-fully-operational"
+var JenkinsClientHost = "SERVER_NAME"
+var JenkinsClientEnv = "ENVIRONMENT"
+var JenkinsClientServerName = "deathstar"

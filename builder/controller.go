@@ -50,6 +50,7 @@ func CreateConfigFile() (t bool, e error) {
 	var (
 		username string
 		apitoken string
+		FileData map[string]string
 	)
 	fmt.Println("Enter jenkins username: ")
 	if _, err := fmt.Scanf("%s", &username); err != nil {
@@ -66,10 +67,9 @@ func CreateConfigFile() (t bool, e error) {
 		return false, err
 	}
 
-	var FileData = map[string]string{
-		"username": username,
-		"apitoken": apitoken,
-	}
+	FileData["username"] = username
+	FileData["apitoken"] = apitoken
+
 	j, jerr := json.MarshalIndent(&FileData, "", "  ")
 	if jerr != nil {
 		fmt.Println("jerr:", jerr.Error())
@@ -83,7 +83,7 @@ func CreateConfigFile() (t bool, e error) {
 	return true, nil
 }
 
-func RunJob(d *jenkins.Auth, s, b string, o bool) {
+func RunJob(d *jenkins.Auth, s, b, t, env string, o bool) {
 	// Instantiate Jenkins
 	j := jenkins.NewJenkins(d, DibsyJenkins)
 	// Create job struct
@@ -100,8 +100,15 @@ func RunJob(d *jenkins.Auth, s, b string, o bool) {
 	// Jenkins server name is deathstar.1stdibs.com
 	// Jenking branch key is BRANCH_NAME
 	// b is the branch arg
-	params.Set(JenkinsHostKey, JenkinsServerName)
-	params.Set(JenkinsBranchKey, b)
+	switch t {
+	case "services":
+		params.Set(JenkinsBranchKey, b)
+		params.Set(JenkinsHostKey, JenkinsServerName)
+	case "client":
+		params.Set(JenkinsClientHost, JenkinsClientServerName)
+		params.Set(JenkinsBranchKey, b)
+		params.Set(JenkinsClientEnv, env)
+	}
 
 	// Try get info about the next build
 	var i jenkins.Job
@@ -139,7 +146,7 @@ func RunJob(d *jenkins.Auth, s, b string, o bool) {
  * @return {[type]}   [description]
  */
 func (u User) BuildService(s, b string, o bool) {
-	service, err := FormatService(s)
+	service, err := FormatService(s, "services")
 	if err != nil {
 		log.Fatal(err)
 		return
@@ -159,7 +166,7 @@ func (u User) BuildService(s, b string, o bool) {
 		ApiToken: u.ApiToken,
 	}
 
-	RunJob(&data, service, branch, o)
+	RunJob(&data, service, branch, "services", "", o)
 }
 
 /**
@@ -185,8 +192,36 @@ func (u User) BuildAllServices(b string, o bool) {
 		}
 		info := fmt.Sprintf("Attempting to build %s service on branch %s", service, branch)
 		fmt.Println(info)
-		RunJob(&data, service, branch, o)
+		RunJob(&data, service, branch, "services", "", o)
 	}
+}
+
+/**
+ * Client Version of BuildServices
+ * @param  {[type]} u User)         BuildClient(s, b, env string, o bool [description]
+ * @return {[type]}   [description]
+ */
+func (u User) BuildClient(s, b, env string, o bool) {
+	service, err := FormatService(s, "client")
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
+	branch := FormatClientBranch(b)
+
+	if _, err := EnsureBranchExists(service, branch); err != nil {
+		log.Fatal("Requested branch does not exist on remote")
+		return
+	}
+
+	var data = jenkins.Auth{
+		Username: u.Username,
+		ApiToken: u.ApiToken,
+	}
+
+	fmt.Printf("Attempting to build %s on branch %s", service, branch)
+	RunJob(&data, service, branch, "client", env, o)
 }
 
 /**
@@ -201,17 +236,35 @@ func FormatBranch(b string) (c string) {
 }
 
 /**
+ * If an empty branch is specified, then default it
+ * to feature-deathstar-fully-operational, otherwise return
+ * the specified branch
+ * @param {[type]} b string) (c string [description]
+ */
+func FormatClientBranch(b string) (c string) {
+	if b == "" {
+		b = AdminV2DefaultBranch
+	}
+	return b
+}
+
+/**
  * Takes a string and if its empty returns an error. If its not
  * empty, it checks a map to make sure the service exists and returns
  * the formatted service job name if its there
  * @param {[type]} s string) (c string, e error [description]
  */
-func FormatService(s string) (c string, e error) {
+func FormatService(s string, t string) (c string, e error) {
 	if s == "" {
 		err := errors.New("Specify service to build")
 		return "", err
 	}
-	s = JenkinsServices[s]
+	switch t {
+	case "services":
+		s = JenkinsServices[s]
+	case "client":
+		s = JenkinsClients[s]
+	}
 	if s == "" {
 		err := errors.New("Specified service does not exist")
 		return "", err
