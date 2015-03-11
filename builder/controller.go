@@ -170,8 +170,7 @@ func (u User) BuildService(s, b string, o bool) {
 }
 
 /**
- * Builds all services. Currently through a loop but will refactor this
- * to run in separate go routines to get concurrency
+ * Builds all services in separate go routines
  * @param  {[type]} u User)         BuildAllServices(b string, o bool [description]
  * @return {[type]}   [description]
  */
@@ -192,7 +191,7 @@ func (u User) BuildAllServices(b string, o bool) {
 		}
 		info := fmt.Sprintf("Attempting to build %s service on branch %s", service, branch)
 		fmt.Println(info)
-		RunJob(&data, service, branch, "services", "", o)
+		go RunJob(&data, service, branch, "services", "", o)
 	}
 }
 
