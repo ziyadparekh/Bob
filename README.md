@@ -25,7 +25,8 @@ step 5: You may need to install Mercurial by following the instructions below
 
 http://mercurial.selenic.com/downloads
 
-step 6: Get the repo either with `go get github.com/ziyadparekh/Bob` or
+step 6: Get the repo 
+either with `go get github.com/ziyadparekh/Bob` or
 ```
 cd $GOPATH/src/github.com/ziyadparekh
 git clone git@github.com:ziyadparekh/Bob.git
