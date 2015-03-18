@@ -40,7 +40,7 @@ export PATH="$PATH:$GOPATH/bin"
 echo 'export PATH="$PATH:$GOPATH/bin"' >> ~/.bash_profile
 ```
 
-Lastly, let’s verify that it works:
+Lastly, let’s verify that it works: :)
 
 ```
 $ bob help
